@@ -45,44 +45,39 @@ export const App = () => {
     setContacts(prevState => [...prevState, { ...contact, id: nanoid() }]);
   };
 
-// Фільтруємо
-const changeFilter = event => 
-  setFilter(event.currentTarget.value );
+  // Фільтруємо
+  const changeFilter = event => setFilter(event.currentTarget.value);
 
-const getFilteredContacts = () => {
-  const normalizedFilter = filter.toLowerCase();
-  return contacts.filter(contact =>
-    contact.name.toLowerCase().includes(normalizedFilter)
+  const getFilteredContacts = () => {
+    const normalizedFilter = filter.toLowerCase();
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter)
+    );
+  };
+
+  const filteredContacts = getFilteredContacts();
+
+  return (
+    <Box>
+      <Title>Phonebook</Title>
+      <ContactForm onSubmit={formSubmitHandler} />
+      <SubTitle>Contacts</SubTitle>
+      {contacts.length > 0 ? (
+        <>
+          <Filter value={filter} onChange={changeFilter} />
+          <ContactList
+            contacts={filteredContacts}
+            onDeleteContact={deleteContact}
+          />
+        </>
+      ) : (
+        <AlertEmptyList>
+          Unfortunately, there is no contact here. Please enter your first
+          contact
+        </AlertEmptyList>
+      )}
+    </Box>
   );
-};
-
-const filteredContacts = getFilteredContacts ();
-
-return (
-<Box>
-        <Title>Phonebook</Title>
-        <ContactForm onSubmit={formSubmitHandler} />
-        <SubTitle>Contacts</SubTitle>
-        {contacts.length > 0 ? (
-          <>
-            <Filter value={filter} onChange={changeFilter} />
-            <ContactList
-              contacts={filteredContacts}
-              onDeleteContact={deleteContact}
-            />
-          </>
-        ) : (
-          <AlertEmptyList>
-            Unfortunately, there is no contact here. Please enter your first
-            contact
-          </AlertEmptyList>
-        )}
-      </Box>
- )
-
-
-
-
 };
 
 /* Class
