@@ -17,9 +17,9 @@ const initialValues = {
 };
 
 export const ContactForm = ({ onSubmit }) => {
-  const handleSubmit = (values, { resetForms }) => {
+  const handleSubmit = (values, { resetForm }) => {
     onSubmit({ ...values });
-    resetForms();
+    resetForm();
   };
 
   /*CLASS
@@ -37,7 +37,7 @@ export class ContactForm extends Component {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ values, handleChange }) => (
+        {({ isSubmitting }) => (
           <FormEl>
             <FormLabel htmlFor="name">
               Name
@@ -46,8 +46,6 @@ export class ContactForm extends Component {
                 name="name"
                 placeholder="Please enter your name
                   ..."
-                value={values.name}
-                onChange={handleChange}
               />
               <AlertForUser name="name" component="div" />
             </FormLabel>
@@ -57,12 +55,12 @@ export class ContactForm extends Component {
                 type="tel"
                 name="number"
                 placeholder="Please enter s phone number ..."
-                value={values.number}
-                onChange={handleChange}
               />
               <AlertForUser name="number" component="div" />
             </FormLabel>
-            <FormButton type="submit"> Add contact </FormButton>
+            <FormButton type="submit" disabled={isSubmitting}>
+              Add contact
+            </FormButton>
           </FormEl>
         )}
       </Formik>

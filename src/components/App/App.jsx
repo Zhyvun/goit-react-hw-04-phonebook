@@ -11,51 +11,61 @@ const initialState = [
   { id: nanoid(), name: 'Eden Clements', number: '645-17-79' },
   { id: nanoid(), name: 'Annie Copeland', number: '227-91-26' },
 ];
-
+console.log(initialState)
 //* HOOKS
 
 export const App = () => {
-  const [contacts, setContacts] = useState(
-    () => JSON.parse(localStorage.getItem('contacts')) ?? initialState
-  );
+
+  const [contacts, setContacts] = useState(() => {
+    return JSON.parse(localStorage.getItem('contacts')) ?? initialState;
+  });
+
+ 
 
   const [filter, setFilter] = useState('');
 
   // Зберігаємо змінений стан контактів  у локальне сховище. Запиши зміни коли 'contacts' змінились.
+
   useEffect(() => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
   }, [contacts]);
 
-  // Видаляємо контакти
-  const deleteContact = contactId => {
-    setContacts(prevState =>
-      prevState.contacts.filter(contact => contact.id !== contactId)
-    );
-  };
-
   // Додаємо контакти + створюємо умову для перевірки вже наявних контактів
   const formSubmitHandler = contact => {
     const isExist = contacts.some(
-      ({ name }) => name.toLowerCase() === contact.name.toLowerCase()
+      ({ name }) =>
+        name.toLowerCase().trim() === contact.name.toLowerCase().trim()
     );
     if (isExist) {
       alert(`${contact.name} is alredy in contacts!`);
       return;
     }
-    setContacts(prevState => [...prevState, { ...contact, id: nanoid() }]);
+    setContacts(prevState => [...prevState, { id: nanoid(), ...contact }]);
   };
 
   // Фільтруємо
-  const changeFilter = event => setFilter(event.currentTarget.value);
+  const changeFilter = event => {
+    setFilter(event.target.value.trim());
+  };
 
   const getFilteredContacts = () => {
     const normalizedFilter = filter.toLowerCase();
+
     return contacts.filter(contact =>
       contact.name.toLowerCase().includes(normalizedFilter)
+    );
+    };
+  
+
+  // Видаляємо контакти
+  const deleteContact = contactId => {
+    setContacts(prevState =>
+      prevState.filter(contact => contact.id !== contactId)
     );
   };
 
   const filteredContacts = getFilteredContacts();
+  
 
   return (
     <Box>
@@ -63,18 +73,19 @@ export const App = () => {
       <ContactForm onSubmit={formSubmitHandler} />
       <SubTitle>Contacts</SubTitle>
       {contacts.length > 0 ? (
-        <>
-          <Filter value={filter} onChange={changeFilter} />
-          <ContactList
-            contacts={filteredContacts}
-            onDeleteContact={deleteContact}
-          />
-        </>
+        <Filter value={filter} onChange={changeFilter} />
       ) : (
         <AlertEmptyList>
           Unfortunately, there is no contact here. Please enter your first
           contact
         </AlertEmptyList>
+      )}
+
+      {contacts.length > 0 && (
+        <ContactList
+          contacts={filteredContacts}
+          onDeleteContact={deleteContact}
+        />
       )}
     </Box>
   );
